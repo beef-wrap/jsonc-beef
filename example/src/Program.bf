@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using static jsonc_Beef.jsonc;
+using static jsonc.jsonc;
 
 namespace example;
 

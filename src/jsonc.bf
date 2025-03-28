@@ -1,12 +1,12 @@
 using System;
 using System.Interop;
 
-namespace jsonc_Beef;
+namespace jsonc;
 
 public static class jsonc
 {
 	typealias char = c_char;
-	typealias ssize_t = int;
+	typealias ssize_t = c_int;
 	typealias json_bool = bool;
 
 	typealias int8_t = int8;
@@ -36,7 +36,7 @@ public static class jsonc
 	*        Although this is exposed by the json_object_get_array() method,
 	*        it is not recommended for direct use.
 	*/
-	const int ARRAY_LIST_DEFAULT_SIZE = 32;
+	public const c_int ARRAY_LIST_DEFAULT_SIZE = 32;
 
 	public function void array_list_free_fn(void* data);
 
@@ -67,31 +67,31 @@ public static class jsonc
 	*
 	* @see array_list_shrink
 	*/
-	/*extern array_list* array_list_new2(array_list_free_fn* free_fn, int initial_size);
+	/*extern array_list* array_list_new2(array_list_free_fn* free_fn, c_int initial_size);
 
 	extern void array_list_free(array_list* al);
 
 	extern void* array_list_get_idx(array_list* al, uint i);
 
-	extern int array_list_insert_idx(array_list* al, uint i, void* data);
+	extern c_int array_list_insert_idx(array_list* al, uint i, void* data);
 
-	extern int array_list_put_idx(array_list* al, uint i, void* data);
+	extern c_int array_list_put_idx(array_list* al, uint i, void* data);
 
-	extern int array_list_add(array_list* al, void* data);
+	extern c_int array_list_add(array_list* al, void* data);
 
 	extern uint array_list_length(array_list* al);
 
-	extern void array_list_sort(array_list* arr, int (* compar) (void*, void*));
+	extern void array_list_sort(array_list* arr, c_int (* compar) (void*, void*));
 
-	extern void* array_list_bsearch(void** key, array_list* arr, int (* compar) (void*, void*));
+	extern void* array_list_bsearch(void** key, array_list* arr, c_int (* compar) (void*, void*));
 
-	extern int array_list_del_idx(array_list* arr, uint idx, uint count);*/
+	extern c_int array_list_del_idx(array_list* arr, uint idx, uint count);*/
 
 	/**
 	* Shrink the array list to just enough to fit the number of elements in it,
 	* plus empty_slots.
 	*/
-	//extern int array_list_shrink(array_list* arr, uint empty_slots);
+	//extern c_int array_list_shrink(array_list* arr, uint empty_slots);
 
 
 	/*
@@ -111,10 +111,10 @@ public static class jsonc
 	* @brief Do not use, json-c internal, may be changed or removed at any time.
 	*/
 
-	[CLink] public static extern void mc_set_debug(int debug);
-	[CLink] public static extern int mc_get_debug(void);
+	[CLink] public static extern void mc_set_debug(c_int debug);
+	[CLink] public static extern c_int mc_get_debug();
 
-	[CLink] public static extern void mc_set_syslog(int syslog);
+	[CLink] public static extern void mc_set_syslog(c_int syslog);
 
 	[CLink] public static extern void mc_debug(char* msg, ...);
 	[CLink] public static extern void mc_error(char* msg, ...);
@@ -132,26 +132,26 @@ public static class jsonc
 	* @brief Methods for retrieving the json-c version.
 	*/
 
-	const int JSON_C_MAJOR_VERSION = 0;
-	const int JSON_C_MINOR_VERSION = 18;
-	const int JSON_C_MICRO_VERSION = 99;
+	public const c_int JSON_C_MAJOR_VERSION = 0;
+	public const c_int JSON_C_MINOR_VERSION = 18;
+	public const c_int JSON_C_MICRO_VERSION = 99;
 
 	/**
 	* @see JSON_C_VERSION
 	* @return the version of the json-c library as a string
 	*/
-	[CLink] public static extern char* json_c_version(void); /* Returns JSON_C_VERSION */
+	[CLink] public static extern char* json_c_version(); /* Returns JSON_C_VERSION */
 
 	/**
-	* The json-c version encoded into an int, with the low order 8 bits
+	* The json-c version encoded into an c_int, with the low order 8 bits
 	* being the micro version, the next higher 8 bits being the minor version
 	* and the next higher 8 bits being the major version.
 	* For example, 7.12.99 would be 0x00070B63.
 	*
 	* @see JSON_C_VERSION_NUM
-	* @return the version of the json-c library as an int
+	* @return the version of the json-c library as an c_int
 	*/
-	[CLink] public static extern int json_c_version_num(void); /* Returns JSON_C_VERSION_NUM */
+	[CLink] public static extern c_int json_c_version_num(); /* Returns JSON_C_VERSION_NUM */
 
 
 	/*
@@ -171,8 +171,7 @@ public static class jsonc
 	* @brief Core json-c API.  Start here, or with json_tokener.h
 	*/
 
-	[CRepr]
-	public enum json_object_int_type
+	public enum json_object_int_type : c_int
 	{
 		json_object_int_type_int64,
 		json_object_int_type_uint64
@@ -196,28 +195,28 @@ public static class jsonc
 	{
 		json_object base_obj;
 		lh_table* c_object;
-	};
+	}
 
 	[CRepr]
 	public struct json_object_array
 	{
 		json_object base_obj;
 		array_list* c_array;
-	};
+	}
 
 	[CRepr]
 	public struct json_object_boolean
 	{
 		json_object base_obj;
 		json_bool c_boolean;
-	};
+	}
 
 	[CRepr]
 	public struct json_object_double
 	{
 		json_object base_obj;
 		double c_double;
-	};
+	}
 
 	[CRepr]
 	public struct json_object_int
@@ -230,7 +229,7 @@ public static class jsonc
 			int64_t c_int64;
 			uint64_t c_uint64;
 		} cint;
-	};
+	}
 
 	[CRepr]
 	public struct json_object_string
@@ -245,22 +244,22 @@ public static class jsonc
 			char[1] idata; // Immediate data.  Actually longer
 			char* pdata; // Only when len < 0
 		} c_string;
-	};
+	}
 
-	const int JSON_OBJECT_DEF_HASH_ENTRIES = 16;
+	public const c_int JSON_OBJECT_DEF_HASH_ENTRIES = 16;
 
 	/**
 	* A flag for the json_object_to_json_string_ext() and
 	* json_object_to_file_ext() functions which causes the output
 	* to have no extra whitespace or formatting applied.
 	*/
-	const int JSON_C_TO_STRING_PLAIN = 0;
+	public const c_int JSON_C_TO_STRING_PLAIN = 0;
 	/**
 	* A flag for the json_object_to_json_string_ext() and
 	* json_object_to_file_ext() functions which causes the output to have
 	* minimal whitespace inserted to make things slightly more readable.
 	*/
-	const int JSON_C_TO_STRING_SPACED = 1 << 0;
+	public const c_int JSON_C_TO_STRING_SPACED = 1 << 0;
 	/**
 	* A flag for the json_object_to_json_string_ext() and
 	* json_object_to_file_ext() functions which causes
@@ -269,7 +268,7 @@ public static class jsonc
 	* See the "Two Space Tab" option at https://jsonformatter.curiousconcept.com/
 	* for an example of the format.
 	*/
-	const int JSON_C_TO_STRING_PRETTY = 1 << 1;
+	public const c_int JSON_C_TO_STRING_PRETTY = 1 << 1;
 	/**
 	* A flag for the json_object_to_json_string_ext() and
 	* json_object_to_file_ext() functions which causes
@@ -277,16 +276,16 @@ public static class jsonc
 	*
 	* Instead of a "Two Space Tab" this gives a single tab character.
 	*/
-	const int JSON_C_TO_STRING_PRETTY_TAB = 1 << 3;
+	public const c_int JSON_C_TO_STRING_PRETTY_TAB = 1 << 3;
 	/**
 	* A flag to drop trailing zero for float values
 	*/
-	const int JSON_C_TO_STRING_NOZERO = 1 << 2;
+	public const c_int JSON_C_TO_STRING_NOZERO = 1 << 2;
 
 	/**
 	* Don't escape forward slashes.
 	*/
-	const int JSON_C_TO_STRING_NOSLASHESCAPE = 1 << 4;
+	public const c_int JSON_C_TO_STRING_NOSLASHESCAPE = 1 << 4;
 
 	/**
 	* A flag for the json_object_to_json_string_ext() and
@@ -295,7 +294,7 @@ public static class jsonc
 	*
 	* Use color for printing json.
 	*/
-	const int JSON_C_TO_STRING_COLOR = 1 << 5;
+	public const c_int JSON_C_TO_STRING_COLOR = 1 << 5;
 
 	/**
 	* A flag for the json_object_object_add_ex function which
@@ -307,7 +306,7 @@ public static class jsonc
 	* knows for sure the key values are unique (e.g. because the
 	* code adds a well-known set of constant key values).
 	*/
-	const int JSON_C_OBJECT_ADD_KEY_IS_NEW = 1 << 1;
+	public const c_int JSON_C_OBJECT_ADD_KEY_IS_NEW = 1 << 1;
 	/**
 	* A flag for the json_object_object_add_ex function which
 	* flags the key as being constant memory. This means that
@@ -325,7 +324,7 @@ public static class jsonc
 	*   json_object_object_add_ex(obj, "ip", json,
 	*       JSON_C_OBJECT_ADD_CONSTANT_KEY);
 	*/
-	const int JSON_C_OBJECT_ADD_CONSTANT_KEY = 1 << 2;
+	public const c_int JSON_C_OBJECT_ADD_CONSTANT_KEY = 1 << 2;
 	/**
 	* This flag is an alias to JSON_C_OBJECT_ADD_CONSTANT_KEY.
 	* Historically, this flag was used first and the new name
@@ -333,7 +332,7 @@ public static class jsonc
 	* 0.16.00 in order to have regular naming.
 	* Use of this flag is now legacy.
 	*/
-	const int JSON_C_OBJECT_KEY_IS_CONSTANT = JSON_C_OBJECT_ADD_CONSTANT_KEY;
+	public const c_int JSON_C_OBJECT_KEY_IS_CONSTANT = JSON_C_OBJECT_ADD_CONSTANT_KEY;
 
 	/**
 	* Set the global value of an option, which will apply to all
@@ -341,7 +340,7 @@ public static class jsonc
 	*
 	* @see json_c_set_serialization_double_format
 	*/
-	const int JSON_C_OPTION_GLOBAL = 0;
+	public const c_int JSON_C_OPTION_GLOBAL = 0;
 	/**
 	* Set a thread-local value of an option, overriding the global value.
 	* This will fail if json-c is not compiled with threading enabled, and
@@ -349,7 +348,7 @@ public static class jsonc
 	*
 	* @see json_c_set_serialization_double_format
 	*/
-	const int JSON_C_OPTION_THREAD = 1;
+	public const c_int JSON_C_OPTION_THREAD = 1;
 
 	 /* reference counting functions */
 
@@ -392,7 +391,7 @@ public static class jsonc
 	* @returns 1 if the object was freed, 0 if only the refcount was decremented
 	* @see json_object_get()
 	*/
-	[CLink] public static extern int json_object_put(json_object* obj);
+	[CLink] public static extern c_int json_object_put(json_object* obj);
 
 	/**
 	* Check if the json_object is of a given type
@@ -407,7 +406,7 @@ public static class jsonc
 		json_type_string
 	* @returns 1 if the object is of the specified type, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_is_type(json_object* obj, json_type type);
+	[CLink] public static extern c_int json_object_is_type(json_object* obj, json_type type);
 
 	/**
 	* Get the type of the json_object.  See also json_type_to_name() to turn this
@@ -442,7 +441,7 @@ public static class jsonc
 	* @param flags formatting options, see JSON_C_TO_STRING_PRETTY and other constants
 	* @returns a string in JSON format
 	*/
-	[CLink] public static extern char* json_object_to_json_string_ext(json_object* obj, int flags);
+	[CLink] public static extern char* json_object_to_json_string_ext(json_object* obj, c_int flags);
 
 	/** Stringify object to json format
 	* @see json_object_to_json_string() for details on how to free string.
@@ -451,7 +450,7 @@ public static class jsonc
 	* @param length a pointer where, if not NULL, the length (without null) is stored
 	* @returns a string in JSON format and the length if not NULL
 	*/
-	[CLink] public static extern char* json_object_to_json_string_length(json_object* obj, int flags, uint* length);
+	[CLink] public static extern char* json_object_to_json_string_length(json_object* obj, c_int flags, uint* length);
 
 	/**
 	* Returns the userdata set by json_object_set_userdata() or
@@ -552,7 +551,7 @@ public static class jsonc
 	*
 	* @returns a json_object of type json_type_object
 	*/
-	[CLink] public static extern json_object* json_object_new_object(void);
+	[CLink] public static extern json_object* json_object_new_object();
 
 	/** Get the hashtable of a json_object of type json_type_object
 	* @param obj the json_object instance
@@ -563,12 +562,12 @@ public static class jsonc
 	/** Get the size of an object in terms of the number of fields it has.
 	* @param obj the json_object whose length to return
 	*/
-	[CLink] public static extern int json_object_object_length(json_object* obj);
+	[CLink] public static extern c_int json_object_object_length(json_object* obj);
 
 	/** Get the sizeof (json_object).
 	* @returns a uint with the sizeof (json_object)
 	*/
-	//JSON_C_CONST_FUNCTION([CLink] public static extern uint json_c_object_sizeof(void));
+	//JSON_C_CONST_FUNCTION([CLink] public static extern uint json_c_object_sizeof());
 
 	/** Add an object field to a json_object of type json_type_object
 	*
@@ -595,7 +594,7 @@ public static class jsonc
 	* @return On success, <code>0</code> is returned.
 	* 	On error, a negative value is returned.
 	*/
-	[CLink] public static extern int json_object_object_add(json_object* obj, char* key, json_object* val);
+	[CLink] public static extern c_int json_object_object_add(json_object* obj, char* key, json_object* val);
 
 	/** Add an object field to a json_object of type json_type_object
 	*
@@ -610,7 +609,7 @@ public static class jsonc
 	* @param opts process-modifying options. To specify multiple options, use
 	*             (OPT1|OPT2)
 	*/
-	[CLink] public static extern int json_object_object_add_ex(json_object* obj, char* key, json_object* val, uint opts);
+	[CLink] public static extern c_int json_object_object_add_ex(json_object* obj, char* key, json_object* val, uint opts);
 
 	/** Get the json_object associate with a given object field.
 	* Deprecated/discouraged: used json_object_object_get_ex instead.
@@ -653,7 +652,7 @@ public static class jsonc
 	*              It is safe to pass a NULL value.
 	* @returns 1 if the key exists, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_object_get_ex(json_object* obj, char* key, json_object** value);
+	[CLink] public static extern c_int json_object_object_get_ex(json_object* obj, char* key, json_object** value);
 
 	/** Delete the given json_object field
 	*
@@ -692,7 +691,7 @@ public static class jsonc
 	// 				key = (char* )lh_entry_k(entry##key);               \
 	// 				val = (json_object* )lh_entry_v(entry##key); \
 	// 				entry_next##key = lh_entry_next(entry##key);        \
-	// 			};                                                          \
+	// 			}                                                          \
 	// 			entry##key;                                                 \
 	// 		});                                                                 \
 	// 		entry##key = entry_next##key)
@@ -734,7 +733,7 @@ public static class jsonc
 	* @see json_object_array_shrink()
 	* @returns a json_object of type json_type_array
 	*/
-	[CLink] public static extern json_object* json_object_new_array(void);
+	[CLink] public static extern json_object* json_object_new_array();
 
 	/** Create a new empty json_object of type json_type_array
 	* with the desired number of slots allocated.
@@ -742,7 +741,7 @@ public static class jsonc
 	* @param initial_size the number of slots to allocate
 	* @returns a json_object of type json_type_array
 	*/
-	[CLink] public static extern json_object* json_object_new_array_ext(int initial_size);
+	[CLink] public static extern json_object* json_object_new_array_ext(c_int initial_size);
 
 	/** Get the arraylist of a json_object of type json_type_array
 	* @param obj the json_object instance
@@ -764,7 +763,7 @@ public static class jsonc
 	* @param jso the json_object instance
 	* @param sort_fn a sorting function
 	*/
-	[CLink] public static extern void json_object_array_sort(json_object* jso, function int(void*, void*) sort_fn);
+	[CLink] public static extern void json_object_array_sort(json_object* jso, function c_int(void*, void*) sort_fn);
 
 	/** Binary search a sorted array for a specified key object.
 	*
@@ -780,7 +779,7 @@ public static class jsonc
 	*
 	* @return the wanted json_object instance
 	*/
-	[CLink] public static extern json_object* json_object_array_bsearch(json_object* key, json_object* jso, function int(void*, void*) sort_fn);
+	[CLink] public static extern json_object* json_object_array_bsearch(json_object* key, json_object* jso, function c_int(void*, void*) sort_fn);
 
 	/** Add an element to the end of a json_object of type json_type_array
 	*
@@ -791,7 +790,7 @@ public static class jsonc
 	* @param obj the json_object instance
 	* @param val the json_object to be added
 	*/
-	[CLink] public static extern int json_object_array_add(json_object* obj, json_object* val);
+	[CLink] public static extern c_int json_object_array_add(json_object* obj, json_object* val);
 
 	/** Insert or replace an element at a specified index in an array (a json_object of type json_type_array)
 	*
@@ -808,7 +807,7 @@ public static class jsonc
 	* @param idx the index to insert the element at
 	* @param val the json_object to be added
 	*/
-	[CLink] public static extern int json_object_array_put_idx(json_object* obj, uint idx, json_object* val);
+	[CLink] public static extern c_int json_object_array_put_idx(json_object* obj, uint idx, json_object* val);
 
 	/** Insert an element at a specified index in an array (a json_object of type json_type_array)
 	*
@@ -826,7 +825,7 @@ public static class jsonc
 	* @param idx the index to insert the element at
 	* @param val the json_object to be added
 	*/
-	[CLink] public static extern int json_object_array_insert_idx(json_object* obj, uint idx, json_object* val);
+	[CLink] public static extern c_int json_object_array_insert_idx(json_object* obj, uint idx, json_object* val);
 
 	/** Get the element at specified index of array `obj` (which must be a json_object of type json_type_array)
 	*
@@ -854,7 +853,7 @@ public static class jsonc
 	* @param count the number of elements to delete
 	* @returns 0 if the elements were successfully deleted
 	*/
-	[CLink] public static extern int json_object_array_del_idx(json_object* obj, uint idx, uint count);
+	[CLink] public static extern c_int json_object_array_del_idx(json_object* obj, uint idx, uint count);
 
 	/**
 	* Shrink the internal memory allocation of the array to just
@@ -863,7 +862,7 @@ public static class jsonc
 	* @param jso the json_object instance, must be json_type_array
 	* @param empty_slots the number of empty slots to leave allocated
 	*/
-	[CLink] public static extern int json_object_array_shrink(json_object* jso, int empty_slots);
+	[CLink] public static extern c_int json_object_array_shrink(json_object* jso, c_int empty_slots);
 
 	/* json_bool type methods */
 
@@ -897,9 +896,9 @@ public static class jsonc
 	* @param new_value the value to be set
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_boolean(json_object* obj, json_bool new_value);
+	[CLink] public static extern c_int json_object_set_boolean(json_object* obj, json_bool new_value);
 
-	/* int type methods */
+	/* c_int type methods */
 
 	/** Create a new empty json_object of type json_type_int
 	* Note that values are stored as 64-bit values internally.
@@ -921,26 +920,26 @@ public static class jsonc
 	*/
 	[CLink] public static extern json_object* json_object_new_uint64(uint64_t i);
 
-	/** Get the int value of a json_object
+	/** Get the c_int value of a json_object
 	*
-	* The type is coerced to a int if the passed object is not a int.
+	* The type is coerced to a c_int if the passed object is not a c_int.
 	* double objects will return their integer conversion except for NaN values
 	* which return INT32_MIN and the errno is set to EINVAL.
 	* Strings will be parsed as an integer. If no conversion exists then 0 is
 	* returned and errno is set to EINVAL. null is equivalent to 0 (no error values
 	* set).
-	* Sets errno to ERANGE if the value exceeds the range of int.
+	* Sets errno to ERANGE if the value exceeds the range of c_int.
 	*
 	* Note that integers are stored internally as 64-bit values.
 	* If the value of too big or too small to fit into 32-bit, INT32_MAX or
 	* INT32_MIN are returned, respectively.
 	*
 	* @param obj the json_object instance
-	* @returns an int
+	* @returns an c_int
 	*/
 	[CLink] public static extern int32_t json_object_get_int(json_object* obj);
 
-	/** Set the int value of a json_object
+	/** Set the c_int value of a json_object
 	*
 	* The type of obj is checked to be a json_type_int and 0 is returned
 	* if it is not without any further actions. If type of obj is json_type_int
@@ -950,7 +949,7 @@ public static class jsonc
 	* @param new_value the value to be set
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_int(json_object* obj, int new_value);
+	[CLink] public static extern c_int json_object_set_int(json_object* obj, c_int new_value);
 
 	/** Increment a json_type_int object by the given amount, which may be negative.
 	*
@@ -966,9 +965,9 @@ public static class jsonc
 	* @param val the value to add
 	* @returns 1 if the increment succeeded, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_int_inc(json_object* obj, int64_t val);
+	[CLink] public static extern c_int json_object_int_inc(json_object* obj, int64_t val);
 
-	/** Get the int value of a json_object
+	/** Get the c_int value of a json_object
 	*
 	* The type is coerced to a int64 if the passed object is not a int64.
 	* double objects will return their int64 conversion except for NaN values
@@ -1016,7 +1015,7 @@ public static class jsonc
 	* @param new_value the value to be set
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_int64(json_object* obj, int64_t new_value);
+	[CLink] public static extern c_int json_object_set_int64(json_object* obj, int64_t new_value);
 
 	/** Set the uint64_t value of a json_object
 	*
@@ -1028,7 +1027,7 @@ public static class jsonc
 	* @param new_value the value to be set
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_uint64(json_object* obj, uint64_t new_value);
+	[CLink] public static extern c_int json_object_set_uint64(json_object* obj, uint64_t new_value);
 
 	/* double type methods */
 
@@ -1082,8 +1081,8 @@ public static class jsonc
 	*
 	* @return -1 on errors, 0 on success.
 	*/
-	[CLink] public static extern int json_c_set_serialization_double_format(char* double_format,
-		int global_or_thread);
+	[CLink] public static extern c_int json_c_set_serialization_double_format(char* double_format,
+		c_int global_or_thread);
 
 	/** Serialize a json_object of type json_type_double to a string.
 	*
@@ -1104,7 +1103,7 @@ public static class jsonc
 	* @param level Ignored.
 	* @param flags Ignored.
 	*/
-	[CLink] public static extern int json_object_double_to_json_string(json_object* jso, printbuf* pb, int level, int flags);
+	[CLink] public static extern c_int json_object_double_to_json_string(json_object* jso, printbuf* pb, c_int level, c_int flags);
 
 	/** Get the double floating point value of a json_object
 	*
@@ -1144,7 +1143,7 @@ public static class jsonc
 	* @param new_value the value to be set
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_double(json_object* obj, double new_value);
+	[CLink] public static extern c_int json_object_set_double(json_object* obj, double new_value);
 
 	/* string type methods */
 
@@ -1168,7 +1167,7 @@ public static class jsonc
 	* @returns a json_object of type json_type_string
 	* @see json_object_new_string()
 	*/
-	[CLink] public static extern json_object* json_object_new_string_len(char* s, int len);
+	[CLink] public static extern json_object* json_object_new_string_len(char* s, c_int len);
 
 	/** Get the string value of a json_object
 	*
@@ -1194,15 +1193,15 @@ public static class jsonc
 	* will be returned.
 	*
 	* @param obj the json_object instance
-	* @returns int
+	* @returns c_int
 	*/
-	[CLink] public static extern int json_object_get_string_len(json_object* obj);
+	[CLink] public static extern c_int json_object_get_string_len(json_object* obj);
 
 	/** Set the string value of a json_object with zero terminated strings
 	* equivalent to json_object_set_string_len (obj, new_value, strlen(new_value))
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_string(json_object* obj, char* new_value);
+	[CLink] public static extern c_int json_object_set_string(json_object* obj, char* new_value);
 
 	/** Set the string value of a json_object str
 	*
@@ -1215,13 +1214,13 @@ public static class jsonc
 	* @param len the length of new_value
 	* @returns 1 if value is set correctly, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_set_string_len(json_object* obj, char* new_value, int len);
+	[CLink] public static extern c_int json_object_set_string_len(json_object* obj, char* new_value, c_int len);
 
 	/** This method exists only to provide a complementary function
 	* along the lines of the other json_object_new_* functions.
 	* It always returns NULL, and it is entirely acceptable to simply use NULL directly.
 	*/
-	[CLink] public static extern json_object* json_object_new_null(void);
+	[CLink] public static extern json_object* json_object_new_null();
 
 	/** Check if two json_object's are equal
 	*
@@ -1240,7 +1239,7 @@ public static class jsonc
 	* @param obj2 the second json_object instance
 	* @returns 1 if both objects are equal, 0 otherwise
 	*/
-	[CLink] public static extern int json_object_equal(json_object* obj1, json_object* obj2);
+	[CLink] public static extern c_int json_object_equal(json_object* obj1, json_object* obj2);
 
 	/**
 	* Perform a shallow copy of src into *dst as part of an overall json_object_deep_copy().
@@ -1256,7 +1255,7 @@ public static class jsonc
 	*
 	* @return On success 1 or 2, -1 on errors
 	*/
-	public function int json_c_shallow_copy_fn(json_object* src, json_object* parent, char* key, uint index, json_object** dst);
+	public function c_int json_c_shallow_copy_fn(json_object* src, json_object* parent, char* key, uint index, json_object** dst);
 
 	/**
 	* The default shallow copy implementation for use with json_object_deep_copy().
@@ -1270,7 +1269,7 @@ public static class jsonc
 	*
 	* @return 1 on success, -1 on errors, but never 2.
 	*/
-	[CLink] public static extern int json_c_shallow_copy_default(json_object* src, json_object* parent, char* key, uint index, json_object** dst);
+	[CLink] public static extern c_int json_c_shallow_copy_default(json_object* src, json_object* parent, char* key, uint index, json_object** dst);
 
 	/**
 	* Copy the contents of the JSON object.
@@ -1291,7 +1290,7 @@ public static class jsonc
 	*          or if the destination pointer is non-NULL
 	*/
 
-	[CLink] public static extern int json_object_deep_copy(json_object* src, json_object** dst, json_c_shallow_copy_fn* shallow_copy);
+	[CLink] public static extern c_int json_object_deep_copy(json_object* src, json_object** dst, json_c_shallow_copy_fn* shallow_copy);
 	/**
 	*******************************************************************************
 	* @file json_object_iterator.h
@@ -1322,7 +1321,7 @@ public static class jsonc
 	public struct json_object_iterator
 	{
 		void* opaque_;
-	};
+	}
 
 	/**
 	* Initializes an iterator structure to a "default" value that
@@ -1346,7 +1345,7 @@ public static class jsonc
 	*
 	* @return json_object_iterator
 	*/
-	[CLink] public static extern json_object_iterator json_object_iter_init_default(void);
+	[CLink] public static extern json_object_iterator json_object_iter_init_default();
 
 	/** Retrieves an iterator to the first pair of the JSON Object.
 	*
@@ -1428,7 +1427,7 @@ public static class jsonc
 	*/
 	[CLink] public static extern void json_object_iter_next(json_object_iterator* iter);
 
-	/** Returns a const pointer to the name of the pair referenced
+	public /** Returns a const pointer to the name of the pair referenced
 	*  by the given iterator.
 	*
 	* @param iter pointer to iterator that references a name/value
@@ -1522,7 +1521,7 @@ public static class jsonc
 		* - EFAULT - Invalid arguments were passed to json_patch_apply()
 		*             (i.e. a C API error, vs. a data error like EINVAL)
 		*/
-		int errno_code;
+		c_int errno_code;
 
 		/**
 		* The index into the patch array of the operation that failed,
@@ -1560,7 +1559,7 @@ public static class jsonc
 	*
 	* @return negative if an error (or not found), or 0 if patch completely applied
 	*/
-	[CLink] public static extern int json_patch_apply(json_object* copy_from, json_object* patch, json_object** base_obj, json_patch_error* patch_error);
+	[CLink] public static extern c_int json_patch_apply(json_object* copy_from, json_object* patch, json_object** base_obj, json_patch_error* patch_error);
 
 	/*
 	* Copyright (c) 2016 Alexadru Ardelean.
@@ -1595,7 +1594,7 @@ public static class jsonc
 	*
 	* @return negative if an error (or not found), or 0 if succeeded
 	*/
-	[CLink] public static extern int json_pointer_get(json_object* obj, char* path, json_object** res);
+	[CLink] public static extern c_int json_pointer_get(json_object* obj, char* path, json_object** res);
 
 	/**
 	* This is a variant of 'json_pointer_get()' that supports printf() style arguments.
@@ -1615,7 +1614,7 @@ public static class jsonc
 	*
 	* @return negative if an error (or not found), or 0 if succeeded
 	*/
-	[CLink] public static extern int json_pointer_getf(json_object* obj, json_object** res, char* path_fmt, ...);
+	[CLink] public static extern c_int json_pointer_getf(json_object* obj, json_object** res, char* path_fmt, ...);
 
 	/**
 	* Sets JSON object 'value' in the 'obj' tree at the location specified
@@ -1641,7 +1640,7 @@ public static class jsonc
 	*
 	* @return negative if an error (or not found), or 0 if succeeded
 	*/
-	[CLink] public static extern int json_pointer_set(json_object** obj, char* path, json_object* value);
+	[CLink] public static extern c_int json_pointer_set(json_object** obj, char* path, json_object* value);
 
 	/**
 	* This is a variant of 'json_pointer_set()' that supports printf() style arguments.
@@ -1660,7 +1659,7 @@ public static class jsonc
 	*
 	* @return negative if an error (or not found), or 0 if succeeded
 	*/
-	[CLink] public static extern int json_pointer_setf(json_object** obj, json_object* value, char* path_fmt, ...);
+	[CLink] public static extern c_int json_pointer_setf(json_object** obj, json_object* value, char* path_fmt, ...);
 
 	/*
 	* $Id: json_tokener.h,v 1.10 2006/07/25 03:24:50 mclark Exp $
@@ -1677,8 +1676,7 @@ public static class jsonc
 	* @file
 	* @brief Methods to parse an input string into a tree of json_object objects.
 	*/
-	[CRepr]
-	public enum json_tokener_error
+	public enum json_tokener_error : c_int
 	{
 		json_tokener_success,
 		json_tokener_continue,
@@ -1702,8 +1700,7 @@ public static class jsonc
 	/**
 	* @deprecated Don't use this outside of json_tokener.c, it will be made private in a future release.
 	*/
-	[CRepr]
-	public enum json_tokener_state
+	public enum json_tokener_state : c_int
 	{
 		json_tokener_state_eatws,
 		json_tokener_state_start,
@@ -1746,7 +1743,7 @@ public static class jsonc
 		char* obj_field_name;
 	}
 
-	const int JSON_TOKENER_DEFAULT_DEPTH = 32;
+	public const c_int JSON_TOKENER_DEFAULT_DEPTH = 32;
 
 	/**
 	* Internal state of the json parser.
@@ -1763,11 +1760,11 @@ public static class jsonc
 	*/
 		char* str;
 		printbuf* pb;
-		int max_depth, depth, is_double, st_pos;
+		c_int max_depth, depth, is_double, st_pos;
 	/**
 	* @deprecated See json_tokener_get_parse_end() instead.
 	*/
-		int char_offset;
+		c_int char_offset;
 	/**
 	* @deprecated See json_tokener_get_error() instead.
 	*/
@@ -1775,7 +1772,7 @@ public static class jsonc
 		uint ucs_char, high_surrogate;
 		char quote_char;
 		json_tokener_srec* stack;
-		int flags;
+		c_int flags;
 	}
 
 	/**
@@ -1809,7 +1806,7 @@ public static class jsonc
 	*
 	* @see json_tokener_set_flags()
 	*/
-	const int JSON_TOKENER_STRICT = 0x01;
+	public const c_int JSON_TOKENER_STRICT = 0x01;
 
 	/**
 	* Use with JSON_TOKENER_STRICT to allow trailing characters after the
@@ -1817,7 +1814,7 @@ public static class jsonc
 	*
 	* @see json_tokener_set_flags()
 	*/
-	const int JSON_TOKENER_ALLOW_TRAILING_CHARS = 0x02;
+	public const c_int JSON_TOKENER_ALLOW_TRAILING_CHARS = 0x02;
 
 	/**
 	* Cause json_tokener_parse_ex() to validate that input is UTF8.
@@ -1829,7 +1826,7 @@ public static class jsonc
 	*
 	* @see json_tokener_set_flags()
 	*/
-	const int JSON_TOKENER_VALIDATE_UTF8 = 0x10;
+	public const c_int JSON_TOKENER_VALIDATE_UTF8 = 0x10;
 
 	/**
 	* Given an error previously returned by json_tokener_get_error(),
@@ -1855,14 +1852,14 @@ public static class jsonc
 	* When done using that to parse objects, free it with json_tokener_free().
 	* See json_tokener_parse_ex() for usage details.
 	*/
-	[CLink] public static extern json_tokener* json_tokener_new(void);
+	[CLink] public static extern json_tokener* json_tokener_new();
 
 	/**
 	* Allocate a new json_tokener with a custom max nesting depth.
 	* The depth must be at least 1.
 	* @see JSON_TOKENER_DEFAULT_DEPTH
 	*/
-	[CLink] public static extern json_tokener* json_tokener_new_ex(int depth);
+	[CLink] public static extern json_tokener* json_tokener_new_ex(c_int depth);
 
 	/**
 	* Free a json_tokener previously allocated with json_tokener_new().
@@ -1894,7 +1891,7 @@ public static class jsonc
 	/**
 	* Set flags that control how parsing will be done.
 	*/
-	[CLink] public static extern void json_tokener_set_flags(json_tokener* tok, int flags);
+	[CLink] public static extern void json_tokener_set_flags(json_tokener* tok, c_int flags);
 
 	/**
 	* Parse a string and return a non-NULL json_object if a valid JSON value
@@ -1936,7 +1933,7 @@ public static class jsonc
 	* responsible for a subsequent call to json_tokener_parse_ex with an 
 	* appropriate str parameter starting with the extra characters.
 	*
-	* This interface is presently not 64-bit clean due to the int len argument
+	* This interface is presently not 64-bit clean due to the c_int len argument
 	* so the function limits the maximum string size to INT32_MAX (2GB).
 	* If the function is called with len == -1 then strlen is called to check
 	* the string length is less than INT32_MAX (2GB)
@@ -1945,8 +1942,8 @@ public static class jsonc
 	* @code
 	json_object* jobj = NULL;
 	char* mystring = NULL;
-	int stringlen = 0;
-	enum json_tokener_error jerr;
+	c_int stringlen = 0;
+	public enum json_tokener_error jerr; : c_int
 	do {
 		mystring = ...  // get JSON string, e.g. read from file, etc...
 		stringlen = strlen(mystring);
@@ -1972,7 +1969,7 @@ public static class jsonc
 	* @param str an string with any valid JSON expression, or portion of.  This does not need to be null terminated.
 	* @param len the length of str
 	*/
-	[CLink] public static extern json_object* json_tokener_parse_ex(json_tokener* tok, char* str, int len);
+	[CLink] public static extern json_object* json_tokener_parse_ex(json_tokener* tok, char* str, c_int len);
 
 	/**
  * A structure to use with json_object_object_foreachC() loops.
@@ -1998,12 +1995,11 @@ public static class jsonc
 	/**
 	 * Type of a custom serialization function.  See json_object_set_serializer.
 	 */
-	public function int json_object_to_json_string_fn(json_object* jso, printbuf* pb, int level, int flags);
+	public function c_int json_object_to_json_string_fn(json_object* jso, printbuf* pb, c_int level, c_int flags);
 
 	/* supported object types */
 
-	[CRepr]
-	public enum json_type
+	public enum json_type : c_int
 	{
 		/* If you change this, be sure to update json_type_to_name() too */
 		json_type_null,
@@ -2031,7 +2027,7 @@ public static class jsonc
 		* @brief Miscllaneous utility functions and macros.
 		*/
 
-	const int JSON_FILE_BUF_SIZE = 4096;
+	public const c_int JSON_FILE_BUF_SIZE = 4096;
 
 		/* utility functions */
 		/**
@@ -2056,7 +2052,7 @@ public static class jsonc
 		*
 		* Returns NULL on failure.  See json_util_get_last_err() for details.
 		*/
-	[CLink] public static extern json_object* json_object_from_fd_ex(int fd, int depth);
+	[CLink] public static extern json_object* json_object_from_fd_ex(c_int fd, c_int depth);
 
 		/**
 		* Create a JSON object from an already opened file descriptor, using
@@ -2064,7 +2060,7 @@ public static class jsonc
 		*
 		* See json_object_from_fd_ex() for details.
 		*/
-	[CLink] public static extern json_object* json_object_from_fd(int fd);
+	[CLink] public static extern json_object* json_object_from_fd(c_int fd);
 
 		/**
 		* Equivalent to:
@@ -2072,7 +2068,7 @@ public static class jsonc
 		*
 		* Returns -1 if something fails.  See json_util_get_last_err() for details.
 		*/
-	[CLink] public static extern int json_object_to_file(char* filename, json_object* obj);
+	[CLink] public static extern c_int json_object_to_file(char* filename, json_object* obj);
 
 		/**
 		* Open and truncate the given file, creating it if necessary, then
@@ -2080,7 +2076,7 @@ public static class jsonc
 		*
 		* Returns -1 if something fails.  See json_util_get_last_err() for details.
 		*/
-	[CLink] public static extern int json_object_to_file_ext(char* filename, json_object* obj, int flags);
+	[CLink] public static extern c_int json_object_to_file_ext(char* filename, json_object* obj, c_int flags);
 
 		/**
 		* Convert the json_object to a string and write it to the file descriptor.
@@ -2092,14 +2088,14 @@ public static class jsonc
 		* @param flags flags to pass to json_object_to_json_string_ext()
 		* @return -1 if something fails.  See json_util_get_last_err() for details.
 		*/
-	[CLink] public static extern int json_object_to_fd(int fd, json_object* obj, int flags);
+	[CLink] public static extern c_int json_object_to_fd(c_int fd, json_object* obj, c_int flags);
 
 		/**
 		* Return the last error from various json-c functions, including:
 		* json_object_to_file{,_ext}, json_object_to_fd() or
 		* json_object_from_{file,fd}, or NULL if there is none.
 		*/
-	[CLink] public static extern char* json_util_get_last_err(void);
+	[CLink] public static extern char* json_util_get_last_err();
 
 		/**
 		* A parsing helper for integer values.  Returns 0 on success,
@@ -2107,20 +2103,20 @@ public static class jsonc
 		* are NOT considered errors, but errno will be set to ERANGE,
 		* just like the strtol/strtoll functions do.
 		*/
-	[CLink] public static extern int json_parse_int64(char* buf, int64_t* retval);
+	[CLink] public static extern c_int json_parse_int64(char* buf, int64_t* retval);
 		/**
 		* A parsing help for integer values, providing one extra bit of 
 		* magnitude beyond json_parse_int64().
 		*/
-	[CLink] public static extern int json_parse_uint64(char* buf, uint64_t* retval);
+	[CLink] public static extern c_int json_parse_uint64(char* buf, uint64_t* retval);
 		/**
 		* @deprecated
 		*/
-	[CLink] public static extern int json_parse_double(char* buf, double* retval);
+	[CLink] public static extern c_int json_parse_double(char* buf, double* retval);
 
 		/**
 		* Return a string describing the type of the object.
-		* e.g. "int", or "object", etc...
+		* e.g. "c_int", or "object", etc...
 		*/
 	[CLink] public static extern char* json_type_to_name(json_type o_type);
 
@@ -2151,12 +2147,12 @@ public static class jsonc
 	public struct printbuf
 	{
 		char* buf;
-		int bpos;
-		int size;
-	};
+		c_int bpos;
+		c_int size;
+	}
 
 
-	[CLink] public static extern printbuf* printbuf_new(void);
+	[CLink] public static extern printbuf* printbuf_new();
 
 	/* As an optimization, printbuf_memappend_fast() is defined as a macro
 	 * that handles copying data if the buffer is large enough; otherwise
@@ -2166,7 +2162,7 @@ public static class jsonc
 	 * Your code should not use printbuf_memappend() directly unless it
 	 * checks the return code. Use printbuf_memappend_fast() instead.
 	 */
-	[CLink] public static extern int printbuf_memappend(printbuf* p, char* buf, int size);
+	[CLink] public static extern c_int printbuf_memappend(printbuf* p, char* buf, c_int size);
 
 		/*#define printbuf_memappend_fast(p, bufptr, bufsize)                  \
 		do                                                           \
@@ -2215,7 +2211,7 @@ public static class jsonc
 	 *
 	 * If offset is -1, this starts at the end of the current data in the buffer.
 	 */
-	[CLink] public static extern int printbuf_memset(printbuf* pb, int offset, int charvalue, int len);
+	[CLink] public static extern c_int printbuf_memset(printbuf* pb, c_int offset, c_int charvalue, c_int len);
 
 	/**
 	 * Formatted print to printbuf.
@@ -2231,7 +2227,7 @@ public static class jsonc
 	 *   printbuf_memappend()
 	 *   printbuf_strappend()
 	 */
-	[CLink] public static extern int sprintbuf(printbuf* p,  char* msg, ...);
+	[CLink] public static extern c_int sprintbuf(printbuf* p,  char* msg, ...);
 
 	[CLink] public static extern void printbuf_reset(printbuf* p);
 
@@ -2260,41 +2256,41 @@ public static class jsonc
 	/**
 	* golden prime used in hash functions
 	*/
-	const int LH_PRIME = 0x9e370001UL;
+	public const c_uint LH_PRIME = 0x9e370001UL;
 
 		   /**
 	* The fraction of filled hash buckets until an insert will cause the table
 	* to be resized.
 	* This can range from just above 0 up to 1.0.
 	*/
-	const float LH_LOAD_FACTOR = 0.66f;
+	public const float LH_LOAD_FACTOR = 0.66f;
 
 		   /**
 	* sentinel pointer value for empty slots
 	*/
-	const void* LH_EMPTY = (void*)-1;
+	public const void* LH_EMPTY = (void*)-1;
 
 	/**
 	* sentinel pointer value for freed slots
 	*/
-	const void* LH_FREED = (void*)-2;
+	public const void* LH_FREED = (void*)-2;
 
 	/**
 	* default string hash function
 	*/
-	const int JSON_C_STR_HASH_DFLT = 0;
+	public const c_int JSON_C_STR_HASH_DFLT = 0;
 
 	/**
 	* perl-like string hash function
 	*/
-	const int JSON_C_STR_HASH_PERLLIKE = 1;
+	public const c_int JSON_C_STR_HASH_PERLLIKE = 1;
 
 	/**
 	* This function sets the hash function to be used for strings.
 	* Must be one of the JSON_C_STR_HASH_* values.
 	* @returns 0 - ok, -1 if parameter was invalid
 	*/
-	//int json_global_set_string_hash(const int h);
+	public //c_int json_global_set_string_hash(const c_int h);
 
 	//struct lh_entry;
 
@@ -2309,7 +2305,7 @@ public static class jsonc
 	/**
 	* callback function prototypes
 	*/
-	function int lh_equal_fn(void* k1, void* k2);
+	function c_int lh_equal_fn(void* k1, void* k2);
 
 	/**
 	* An entry in the hash table.  Outside of linkhash.c, treat this as opaque.
@@ -2327,7 +2323,7 @@ public static class jsonc
 		* need to free k.
 		* @deprecated use lh_entry_k_is_constant() instead.
 		*/
-		int k_is_constant;
+		c_int k_is_constant;
 		/**
 		* The value.
 		* @deprecated Use lh_entry_v() instead of accessing this directly.
@@ -2355,12 +2351,12 @@ public static class jsonc
 		* Size of our hash.
 		* @deprecated do not use outside of linkhash.c
 		*/
-		int size;
+		c_int size;
 		/**
 		* Numbers of entries.
 		* @deprecated Use lh_table_length() instead.
 		*/
-		int count;
+		c_int count;
 
 		/**
 		* The first entry.
@@ -2429,7 +2425,7 @@ public static class jsonc
 	* @return On success, a pointer to the new linkhash table is returned.
 	* 	On error, a null pointer is returned.
 	*/
-	//extern lh_table* lh_table_new(int size, lh_entry_free_fn* free_fn, lh_hash_fn* hash_fn, lh_equal_fn* equal_fn);
+	//extern lh_table* lh_table_new(c_int size, lh_entry_free_fn* free_fn, lh_hash_fn* hash_fn, lh_equal_fn* equal_fn);
 
 	/**
 	* Convenience function to create a new linkhash table with char keys.
@@ -2439,7 +2435,7 @@ public static class jsonc
 	* @return On success, a pointer to the new linkhash table is returned.
 	* 	On error, a null pointer is returned.
 	*/
-	//extern lh_table* lh_kchar_table_new(int size, lh_entry_free_fn* free_fn);
+	//extern lh_table* lh_kchar_table_new(c_int size, lh_entry_free_fn* free_fn);
 
 	/**
 	* Convenience function to create a new linkhash table with ptr keys.
@@ -2449,7 +2445,7 @@ public static class jsonc
 	* @return On success, a pointer to the new linkhash table is returned.
 	* 	On error, a null pointer is returned.
 	*/
-	//extern lh_table* lh_kptr_table_new(int size, lh_entry_free_fn* free_fn);
+	//extern lh_table* lh_kptr_table_new(c_int size, lh_entry_free_fn* free_fn);
 
 	/**
 	* Free a linkhash table.
@@ -2471,7 +2467,7 @@ public static class jsonc
 	* @return On success, <code>0</code> is returned.
 	* 	On error, a negative value is returned.
 	*/
-	//extern int lh_table_insert(lh_table* t, void* k, void* v);
+	//extern c_int lh_table_insert(lh_table* t, void* k, void* v);
 
 	/**
 	* Insert a record into the table using a precalculated key hash.
@@ -2487,7 +2483,7 @@ public static class jsonc
 	* @param opts if set to JSON_C_OBJECT_ADD_CONSTANT_KEY, sets lh_entry.k_is_constant
 	*             so t's free function knows to avoid freeing the key.
 	*/
-	//extern int lh_table_insert_w_hash(lh_table* t, void* k, void* v, unsigned long h, unsigned opts);
+	//extern c_int lh_table_insert_w_hash(lh_table* t, void* k, void* v, unsigned long h, unsigned opts);
 
 	/**
 	* Lookup a record in the table.
@@ -2532,7 +2528,7 @@ public static class jsonc
 	* @return 0 if the item was deleted.
 	* @return -1 if it was not found.
 	*/
-	//extern int lh_table_delete_entry(lh_table* t, lh_entry* e);
+	//extern c_int lh_table_delete_entry(lh_table* t, lh_entry* e);
 
 	/**
 	* Delete a record from the table.
@@ -2544,12 +2540,12 @@ public static class jsonc
 	* @return 0 if the item was deleted.
 	* @return -1 if it was not found.
 	*/
-	//extern int lh_table_delete(lh_table* t, void* k);
+	//extern c_int lh_table_delete(lh_table* t, void* k);
 
 	/**
 	* Return the number of entries in the table.
 	*/
-	//extern int lh_table_length(lh_table* t);
+	//extern c_int lh_table_length(lh_table* t);
 
 	/**
 	* Resizes the specified table.
@@ -2560,5 +2556,5 @@ public static class jsonc
 	* @return On success, <code>0</code> is returned.
 	* 	On error, a negative value is returned.
 	*/
-	//int lh_table_resize(lh_table* t, int new_size);
+	//c_int lh_table_resize(lh_table* t, c_int new_size);
 }

@@ -2,9 +2,10 @@ FileVersion = 1
 
 [Project]
 Name = "jsonc-beef"
-TargetType = "BeefLib"
-StartupObject = "jsonc_beef.Program"
+DefaultNamespace = "jsonc"
 
 [Configs.Debug.Win64]
-CLibType = "DynamicDebug"
-LibPaths = ["$(ProjectDir)\\libs\\json-c-static.lib"]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\jsonc_d.lib"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\jsonc.lib"]
